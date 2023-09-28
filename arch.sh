@@ -57,7 +57,9 @@ init(){
 
   # Change root
   arch-chroot /mnt
+}
 
+set_locale(){
   # Set time locale
   ln -sf /usr/share/zoneinfo/$REGION /etc/localtime
   hwclock --systohc
@@ -76,7 +78,8 @@ init(){
 
 # Install bootloader (GRUB)
 bootloader(){
-  pacman -S grub efiboomgr
+  pacman -S grub efibootmgr
+  grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB
 }
 
 
