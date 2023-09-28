@@ -26,7 +26,7 @@ get_arch(){
 create_partitions(){
   # Make
   parted -s $HDDDEV \
-    mklabel msdos \
+    mklabel gpt \
     mkpart primary 1M 300MB \
     mkpart primary 301MB 16685MB \
     mkpart primary 16686MB 100%
@@ -46,8 +46,6 @@ mount_partitions(){
 set_keyboard(){
   # Set keyboard layout
   loadkeys us
-
-  
 }
 
 set_datetime(){
@@ -63,12 +61,10 @@ copy_provisions(){
   git clone https://github.com/xerocuil/provisions.git /mnt/provisions
 }
 
-change_root(){
-  arch-chroot /mnt
-}
+
 
 install_essentials(){
-  pacstrap -K /mnt base linux linux-firmware git tmux
+  pacstrap -K /mnt base linux linux-firmware git tmux grub efibootmgr
 }
 
 set_locale(){
@@ -88,15 +84,12 @@ set_locale(){
   fi
 }
 
-# Install bootloader (GRUB)
-bootloader(){
-  pacman -S grub efibootmgr
-  grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB
+
+change_root(){
+  arch-chroot /mnt
 }
 
-
-# get_arch
-# set_locale
-# create_partitions
-# init
-# bootloader
+# Install bootloader (GRUB)
+bootloader(){
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+}
