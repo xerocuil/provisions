@@ -4,9 +4,9 @@
 HDDDEV=/dev/sda
 BOOTSIZE=300M
 SWAPSIZE=16G
-BOOTPART=$HDDDEV1
-SWAPPART=$HDDDEV2
-ROOTPART=$HDDDEV3
+BOOTPART=${HDDDEV}1
+SWAPPART=${HDDDEV2}2
+ROOTPART=${HDDDEV}3
 
 # Functions
 # create_partitions(){
@@ -39,7 +39,7 @@ create_partitions(){
 }
 
 format_partitions(){
-  mkfs.fat -F 32 $BOOTPART
+  mkfs.fat -F 32 -n "boot" $BOOTPART
   mkswap $SWAPPART
   mkfs.ext4 $ROOTPART
 }
