@@ -54,4 +54,5 @@ get_arch(){
     echo -e "64-bit x64 UEFI\n"
   else
     echo -e "\n"
+  fi
 }
