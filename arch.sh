@@ -30,6 +30,9 @@ create_partitions(){
     mkpart primary 1M 300MB \
     mkpart primary 301MB 16685MB \
     mkpart primary 16686MB 100%
+}
+
+format_partitions(){
   # Format
   mkfs.fat -F 32 -n "boot" $BOOTPART
   mkswap $SWAPPART
