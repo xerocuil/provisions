@@ -34,6 +34,9 @@ create_partitions(){
   mkfs.fat -F 32 -n "boot" $BOOTPART
   mkswap $SWAPPART
   mkfs.ext4 $ROOTPART
+}
+
+mount_partitions(){
   # Mount
   mount $ROOTPART /mnt
   mount --mkdir $BOOTPART /mnt/boot
@@ -48,15 +51,20 @@ set_locale(){
   timedatectl
 }
 
-init(){
-  # Install essential packages
-  pacstrap -K /mnt base linux linux-firmware
-
-  # Configure Fstab
+generate_fstab(){
   genfstab -U /mnt >> /mnt/etc/fstab
+}
 
-  # Change root
+copy_provisions(){
+  https://github.com/xerocuil/provisions.git /mnt/provisions
+}
+
+change_root(){
   arch-chroot /mnt
+}
+
+install_essentials(){
+  pacstrap -K /mnt base linux linux-firmware git tmux
 }
 
 set_locale(){
