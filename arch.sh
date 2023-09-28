@@ -43,10 +43,14 @@ mount_partitions(){
   swapon $SWAPPART
 }
 
-set_locale(){
+set_keyboard(){
   # Set keyboard layout
   loadkeys us
 
+  
+}
+
+set_datetime(){
   # Update system clock
   timedatectl
 }
