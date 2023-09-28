@@ -34,11 +34,12 @@ create_partitions(){
   parted -s $HDDDEV \
     mklabel msdos \
     mkpart primary 1M 300MB \
-    mkpart primary 301MB 16000MB \
-    mkpart primary 16001MB 100% 
+    mkpart primary 301MB 16685MB \
+    mkpart primary 16686MB 100% 
 }
 
 format_partitions(){
+  mkfs.fat -F 32 $BOOTPART
   mkswap $SWAPPART
   mkfs.ext4 $ROOTPART
 }
