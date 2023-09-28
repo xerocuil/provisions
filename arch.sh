@@ -9,25 +9,33 @@ SWAPPART=$HDDDEV2
 ROOTPART=$HDDDEV3
 
 # Functions
+# create_partitions(){
+#   fdisk $HDDDEV <<EEOF
+#   n
+#   p
+#   1
+
+#   +$BOOTSIZE
+#   n
+#   p
+#   2
+
+#   +$SWAPSIZE
+#   n
+#   p
+#   3
+
+
+# EEOF
+#   exit 0
+# }
+
 create_partitions(){
-  fdisk $HDDDEV <<EEOF
-  n
-  p
-  1
-
-  +$BOOTSIZE
-  n
-  p
-  2
-
-  +$SWAPSIZE
-  n
-  p
-  3
-
-
-EEOF
-  exit 0
+  parted -s $HDDDEV \
+    mklabel msdos \
+    mkpart primary 1M 300MB \
+    mkpart primary 301MB 16000MB \
+    mkpart primary 16001MB 100% 
 }
 
 format_partitions(){
