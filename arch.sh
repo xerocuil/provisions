@@ -5,53 +5,9 @@ HDDDEV=/dev/sda
 BOOTSIZE=300M
 SWAPSIZE=16G
 BOOTPART=${HDDDEV}1
-SWAPPART=${HDDDEV2}2
+SWAPPART=${HDDDEV}2
 ROOTPART=${HDDDEV}3
-
-# Functions
-# create_partitions(){
-#   fdisk $HDDDEV <<EEOF
-#   n
-#   p
-#   1
-
-#   +$BOOTSIZE
-#   n
-#   p
-#   2
-
-#   +$SWAPSIZE
-#   n
-#   p
-#   3
-
-
-# EEOF
-#   exit 0
-# }
-
-create_partitions(){
-  parted -s $HDDDEV \
-    mklabel msdos \
-    mkpart primary 1M 300MB \
-    mkpart primary 301MB 16685MB \
-    mkpart primary 16686MB 100% 
-}
-
-format_partitions(){
-  mkfs.fat -F 32 -n "boot" $BOOTPART
-  mkswap $SWAPPART
-  mkfs.ext4 $ROOTPART
-}
-
-
-set_locale(){
-  # Set keyboard layout
-  loadkeys us
-
-  # Update system clock
-  timedatectl
-}
+REGION="America/New_York"
 
 get_arch(){
   # Get arch/boot mode
@@ -65,3 +21,48 @@ get_arch(){
     echo -e "\n"
   fi
 }
+
+create_partitions(){
+  # Make
+  parted -s $HDDDEV \
+    mklabel msdos \
+    mkpart primary 1M 300MB \
+    mkpart primary 301MB 16685MB \
+    mkpart primary 16686MB 100%
+  # Format
+  mkfs.fat -F 32 -n "boot" $BOOTPART
+  mkswap $SWAPPART
+  mkfs.ext4 $ROOTPART
+  # Mount
+  mount $ROOTPART /mnt
+  mount --mkdir $BOOTPART /mnt/boot
+  swapon $SWAPPART
+}
+
+set_locale(){
+  # Set keyboard layout
+  loadkeys us
+
+  # Update system clock
+  timedatectl
+}
+
+init(){
+  # Install essential packages
+  pacstrap -K /mnt base linux linux-firmware
+
+  # Configure Fstab
+  genfstab -U /mnt >> /mnt/etc/fstab
+
+  # Change root
+  arch-chroot /mnt
+
+  # Set time zone/clock
+  ln -sf /usr/share/zoneinfo/$REGION /etc/localtime
+  hwclock --systohc
+}
+
+# get_arch
+# set_locale
+# create_partitions
+# init
