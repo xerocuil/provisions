@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # Globals
+HOSTNAME="arch"
 HDDDEV=/dev/sda
 BOOTSIZE=300M
 SWAPSIZE=16G
@@ -57,12 +58,30 @@ init(){
   # Change root
   arch-chroot /mnt
 
-  # Set time zone/clock
+  # Set time locale
   ln -sf /usr/share/zoneinfo/$REGION /etc/localtime
   hwclock --systohc
+  sed -i '1i# Custom settings\nLANG=de_DE.UTF-8\n\n' /etc/locale.gen
+
+  # Set hostname
+  echo -e "$HOSTNAME" > /etc/hostname
+
+  # Set root password
+  echo -e "Would you like to change the root password?\n[y/n]\n"
+  read set_password
+  if [[ set_password == "y" ]];then
+    passwd
+  fi
 }
+
+# Install bootloader (GRUB)
+bootloader(){
+  pacman -S grub efiboomgr
+}
+
 
 # get_arch
 # set_locale
 # create_partitions
 # init
+# bootloader
