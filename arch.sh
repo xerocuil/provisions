@@ -56,7 +56,7 @@ generate_fstab(){
 }
 
 copy_provisions(){
-  https://github.com/xerocuil/provisions.git /mnt/provisions
+  git clone https://github.com/xerocuil/provisions.git /mnt/provisions
 }
 
 change_root(){
